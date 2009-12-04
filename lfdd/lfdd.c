@@ -2,8 +2,7 @@
  * LFDD - Linux Firmware Debug Driver
  * File: lfdd.c
  *
- * Copyright (C) 2006 - 2009 Merck Hung <merckhung@gmail.com>
- *										<merck_hung@asus.com>
+ * Copyright (C) 2006 - 2010 Merck Hung <merckhung@gmail.com>
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -80,6 +79,9 @@
     WFUNC( DATA.buf, DATA.addr );                           \
     return 0;                                               \
 }
+
+
+spinlock_t lfdd_lock;
 
 
 static int lfdd_open( struct inode *inode, struct file *file ) {
@@ -221,14 +223,22 @@ static int __init lfdd_init( void ) {
 
     int ret;
 
+
     printk( KERN_INFO "lfdd: Linux Firmware Debug Driver Version %s\n", LFDD_VERSION );
 
+
+	// Register character device
     ret = misc_register( &lfdd_dev );
     if( ret < 0 ) {
-    
-        pdbg( "register lfdd driver failed.\n" );
+
+        DBGPRINT( "register lfdd driver failed.\n" );
         return ret;
     }
+
+
+	// Initialize spin lock
+	spin_lock_init( &lfdd_lock );
+
 
     return 0;
 }
@@ -237,7 +247,7 @@ static int __init lfdd_init( void ) {
 static void __exit lfdd_exit( void ) {
 
     misc_deregister( &lfdd_dev );
-    pdbg( "driver unloaded.\n" );
+    printk( KERN_INFO "lfdd: driver unloaded.\n" );
 }
 
 

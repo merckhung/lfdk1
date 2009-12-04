@@ -2,8 +2,7 @@
  * LFDK - Linux Firmware Debug Kit
  * File: lfdk.h
  *
- * Copyright (C) 2006 - 2009 Merck Hung <merckhung@gmail.com>
- *										<merck_hung@asus.com>
+ * Copyright (C) 2006 - 2010 Merck Hung <merckhung@gmail.com>
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -15,7 +14,7 @@
  * GNU General Public License for more details.
  *
  */
-#define LFDK_VERSION            "2.0.0pre"
+#define LFDK_VERSION            "2.0.0"
 #define LFDK_PROGNAME           "lfdk"
 #define LFDK_VERTEXT            LFDK_PROGNAME" version "LFDK_VERSION", Linux Firmware Debug Kit"
 #define LFDK_MAX_PCIBUF         50

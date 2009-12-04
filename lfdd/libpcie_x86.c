@@ -1,6 +1,6 @@
 /*
  * LFDD - Linux Firmware Debug Driver
- * File: libpci_x86.c
+ * File: libpcie_x86.c
  *
  * Copyright (C) 2006 - 2010 Merck Hung <merckhung@gmail.com>
  *
@@ -34,7 +34,7 @@
 extern spinlock_t lfdd_lock;
 
 
-unsigned int lfdd_cal_pci_addr( unsigned char bus, unsigned char dev, unsigned char fun, unsigned char reg ) {
+unsigned int lfdd_cal_pcie_addr( unsigned char bus, unsigned char dev, unsigned char fun, unsigned char reg ) {
 
     unsigned int addr = 0;
 
@@ -55,7 +55,7 @@ unsigned int lfdd_cal_pci_addr( unsigned char bus, unsigned char dev, unsigned c
 }
 
 
-unsigned char lfdd_pci_read_byte( unsigned int addr ) {
+unsigned char lfdd_pcie_read_byte( unsigned int addr ) {
 
     unsigned long flags;
     unsigned int orig_idx;
@@ -83,7 +83,7 @@ unsigned char lfdd_pci_read_byte( unsigned int addr ) {
 }
 
 
-unsigned short int lfdd_pci_read_word( unsigned int addr ) {
+unsigned short int lfdd_pcie_read_word( unsigned int addr ) {
 
     unsigned long flags;
     unsigned int orig_idx;
@@ -111,7 +111,7 @@ unsigned short int lfdd_pci_read_word( unsigned int addr ) {
 }
 
 
-unsigned int lfdd_pci_read_dword( unsigned int addr ) {
+unsigned int lfdd_pcie_read_dword( unsigned int addr ) {
 
     unsigned long flags;
     unsigned int orig_idx;
@@ -137,7 +137,7 @@ unsigned int lfdd_pci_read_dword( unsigned int addr ) {
 }
 
 
-void lfdd_pci_write_byte( unsigned int value, unsigned int addr ) {
+void lfdd_pcie_write_byte( unsigned int value, unsigned int addr ) {
 
     unsigned long flags;
     unsigned int orig_idx;
@@ -167,7 +167,7 @@ void lfdd_pci_write_byte( unsigned int value, unsigned int addr ) {
 }
 
 
-void lfdd_pci_write_word( unsigned int value, unsigned int addr ) {
+void lfdd_pcie_write_word( unsigned int value, unsigned int addr ) {
 
     unsigned long flags;
     unsigned int orig_idx;
@@ -197,7 +197,7 @@ void lfdd_pci_write_word( unsigned int value, unsigned int addr ) {
 }
 
 
-void lfdd_pci_write_dword( unsigned int value, unsigned int addr ) {
+void lfdd_pcie_write_dword( unsigned int value, unsigned int addr ) {
 
     unsigned long flags;
     unsigned int orig_idx;
@@ -220,12 +220,12 @@ void lfdd_pci_write_dword( unsigned int value, unsigned int addr ) {
 }
 
 
-void lfdd_pci_read_256byte( struct lfdd_pci_t *ppci ) { 
+void lfdd_pcie_read_256byte( struct lfdd_pcie_t *ppci ) { 
 
     unsigned long flags;
     unsigned int orig_idx;
     int i, value;
-    unsigned int addr = lfdd_cal_pci_addr( ppci->bus, ppci->dev, ppci->fun, ppci->reg );
+    unsigned int addr = lfdd_cal_pcie_addr( ppci->bus, ppci->dev, ppci->fun, ppci->reg );
 
     spin_lock_irqsave( &lfdd_lock, flags );
 

@@ -2,8 +2,7 @@
  * LFDK - Linux Firmware Debug Kit
  * File: libcmos.c
  *
- * Copyright (C) 2006 - 2009 Merck Hung <merckhung@gmail.com>
- *										<merck_hung@asus.com>
+ * Copyright (C) 2006 - 2010 Merck Hung <merckhung@gmail.com>
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and

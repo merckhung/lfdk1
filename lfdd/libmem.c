@@ -2,8 +2,7 @@
  * LFDD - Linux Firmware Debug Driver
  * File: libmem.c
  *
- * Copyright (C) 2006 - 2009 Merck Hung <merckhung@gmail.com>
- *										<merck_hung@asus.com>
+ * Copyright (C) 2006 - 2010 Merck Hung <merckhung@gmail.com>
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -34,7 +33,7 @@
 #include "lfdd.h"
 
 
-static DEFINE_SPINLOCK( status_lock );
+extern spinlock_t lfdd_lock;
 
 
 unsigned char lfdd_mem_read_byte( unsigned int addr ) {
@@ -116,12 +115,12 @@ void lfdd_mem_write_byte( unsigned int value, unsigned int addr ) {
     // Map physical memory address
     phymem = phys_to_virt( addr );
 
-    spin_lock_irqsave( &status_lock, flags );
+    spin_lock_irqsave( &lfdd_lock, flags );
     temp = *phymem;
     temp &= ~0xff;
     temp |= (unsigned char)(value & 0xff);
     *phymem = (unsigned int)temp;
-    spin_unlock_irqrestore( &status_lock, flags );
+    spin_unlock_irqrestore( &lfdd_lock, flags );
 
     phymem = NULL;
 }
@@ -143,12 +142,12 @@ void lfdd_mem_write_word( unsigned int value, unsigned int addr ) {
     // Map physical memory address
     phymem = phys_to_virt( addr );
 
-    spin_lock_irqsave( &status_lock, flags );
+    spin_lock_irqsave( &lfdd_lock, flags );
     temp = *phymem;
     temp &= ~0xffff;
     temp |= (unsigned char)(value & 0xffff);
     *phymem = temp;
-    spin_unlock_irqrestore( &status_lock, flags );
+    spin_unlock_irqrestore( &lfdd_lock, flags );
 
     phymem = NULL;
 }
@@ -169,9 +168,9 @@ void lfdd_mem_write_dword( unsigned int value, unsigned int addr ) {
     // Map physical memory address
     phymem = phys_to_virt( addr );
 
-    spin_lock_irqsave( &status_lock, flags );
+    spin_lock_irqsave( &lfdd_lock, flags );
     *phymem = value;
-    spin_unlock_irqrestore( &status_lock, flags );
+    spin_unlock_irqrestore( &lfdd_lock, flags );
 
     phymem = NULL;
 }

@@ -1,7 +1,7 @@
 CONFIG_LFDD=m
 
 obj-$(CONFIG_LFDD) := lfdd_drv.o
-lfdd_drv-objs := libpci_x86.o libmem.o libio.o lfdd.o
+lfdd_drv-objs := libpci_x86.o libpcie_x86.o libmem.o libio.o libi2c_ich.o lfdd.o
 EXTRA_CFLAGS += -DLFDD_DEBUG
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build

@@ -2,8 +2,7 @@
  * LFDK - Linux Firmware Debug Kit
  * File: lfdk.c
  *
- * Copyright (C) 2006 - 2009 Merck Hung <merckhung@gmail.com>
- *										<merck_hung@asus.com>
+ * Copyright (C) 2006 - 2010 Merck Hung <merckhung@gmail.com>
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -53,7 +52,7 @@ void PrintBaseScreen( void );
 static void usage( void ) {
 
     fprintf( stderr, "\n"LFDK_VERTEXT"\n" );
-	fprintf( stderr, "Copyright (C) 2006 - 2009, Merck Hung <merckhung@gmail.com>\n" );
+	fprintf( stderr, "Copyright (C) 2006 - 2010, Merck Hung <merckhung@gmail.com>\n" );
     fprintf( stderr, "Usage: "LFDK_PROGNAME" [-h] [-d /dev/lfdd] [-n ./pci.ids] [-b 255]\n" );
     fprintf( stderr, "\t-n\tFilename of PCI Name Database, default is /usr/share/misc/pci.ids\n" );
     fprintf( stderr, "\t-d\tDevice name of Linux Firmware Debug Driver, default is /dev/lfdd\n" );
