@@ -104,6 +104,8 @@ static long lfdd_ioctl( struct file *file
     struct lfdd_io_t lfdd_io_data;
     void __user *argp = (void __user *)arg;
 
+	printk( KERN_INFO "C1\n" );
+
     switch( cmd ) {
 
     
@@ -112,8 +114,10 @@ static long lfdd_ioctl( struct file *file
         //
         case LFDD_PCI_READ_256BYTE:
 
+			printk( KERN_INFO "C3\n" );
             if( copy_from_user( &lfdd_pci_data, argp, sizeof( struct lfdd_pci_t ) ) ) {
 
+				printk( KERN_INFO "C2\n" );
                 return -EFAULT;
             }
 
@@ -123,21 +127,27 @@ static long lfdd_ioctl( struct file *file
             return copy_to_user( argp, &lfdd_pci_data, sizeof( struct lfdd_pci_t ) );
 
         case LFDD_PCI_READ_BYTE:
+			printk( KERN_INFO "C4\n" );
             LFDD_PCI_READ( lfdd_pci_read_byte, lfdd_pci_data );
 
         case LFDD_PCI_READ_WORD:
+			printk( KERN_INFO "C5\n" );
             LFDD_PCI_READ( lfdd_pci_read_word, lfdd_pci_data );
 
         case LFDD_PCI_READ_DWORD:
+			printk( KERN_INFO "C6\n" );
             LFDD_PCI_READ( lfdd_pci_read_dword, lfdd_pci_data );
 
         case LFDD_PCI_WRITE_BYTE:
+			printk( KERN_INFO "C7\n" );
             LFDD_PCI_WRITE( lfdd_pci_write_byte, lfdd_pci_data );
 
         case LFDD_PCI_WRITE_WORD:
+			printk( KERN_INFO "C8\n" );
             LFDD_PCI_WRITE( lfdd_pci_write_word, lfdd_pci_data );
 
         case LFDD_PCI_WRITE_DWORD:
+			printk( KERN_INFO "C9\n" );
             LFDD_PCI_WRITE( lfdd_pci_write_dword, lfdd_pci_data );        
 
 
@@ -146,20 +156,25 @@ static long lfdd_ioctl( struct file *file
         //
         case LFDD_MEM_READ_256BYTE:
 
+			printk( KERN_INFO "C10\n" );
             if( copy_from_user( &lfdd_mem_data, argp, sizeof( struct lfdd_mem_t ) ) ) {
 
+				printk( KERN_INFO "C11\n" );
                 return -EFAULT;
             }
 
             memset( lfdd_mem_data.mass_buf, 0, LFDD_MASSBUF_SIZE );
             lfdd_mem_read_256byte( &lfdd_mem_data );
 
+			printk( KERN_INFO "C12\n" );
             return copy_to_user( argp, &lfdd_mem_data, sizeof( struct lfdd_mem_t ) );
 
         case LFDD_MEM_READ_BYTE:
+			printk( KERN_INFO "C13\n" );
             LFDD_MEM_READ( lfdd_mem_read_byte, lfdd_mem_data );
 
         case LFDD_MEM_READ_WORD:
+			printk( KERN_INFO "C14\n" );
             LFDD_MEM_READ( lfdd_mem_read_word, lfdd_mem_data );
 
         case LFDD_MEM_READ_DWORD:
@@ -180,8 +195,10 @@ static long lfdd_ioctl( struct file *file
         //
         case LFDD_IO_READ_256BYTE:
 
+			printk( KERN_INFO "C15\n" );
             if( copy_from_user( &lfdd_io_data, argp, sizeof( struct lfdd_io_t ) ) ) {
 
+				printk( KERN_INFO "C16\n" );
                 return -EFAULT;
             }
 
@@ -198,6 +215,7 @@ static long lfdd_ioctl( struct file *file
 
     }
 
+	printk( KERN_INFO "C17\n" );
     return -EINVAL;
 }
 
@@ -205,6 +223,7 @@ static long lfdd_ioctl( struct file *file
 static struct file_operations lfdd_fops = {
 
     .owner      =   THIS_MODULE,
+	.unlocked_ioctl = lfdd_ioctl,
     .compat_ioctl =   lfdd_ioctl,
     .open       =   lfdd_open,
     .release    =   lfdd_release,
