@@ -1,5 +1,3 @@
-
-
 all:
 	mkdir bin
 	$(MAKE) -C lfdd
@@ -11,5 +9,4 @@ clean:
 	$(MAKE) -C lfdd clean
 	$(MAKE) -C lfdk clean
 	rm -rf bin
-
 

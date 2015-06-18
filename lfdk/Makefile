@@ -1,29 +1,29 @@
-CROSS_COMPILE		=
-AS					=   $(CROSS_COMPILE)as
-AR					=   $(CROSS_COMPILE)ar
-CC					=   $(CROSS_COMPILE)gcc
-CPP					=   $(CC) -E
-LD					=   $(CROSS_COMPILE)ld
-NM					=   $(CROSS_COMPILE)nm
-OBJCOPY				=   $(CROSS_COMPILE)objcopy
-OBJDUMP				=   $(CROSS_COMPILE)objdump
-RANLIB				=   $(CROSS_COMPILE)ranlib
-READELF				=   $(CROSS_COMPILE)readelf
-SIZE				=   $(CROSS_COMPILE)size
-STRINGS				=   $(CROSS_COMPILE)strings
-STRIP				=   $(CROSS_COMPILE)strip
+CROSS   =
+AS      = $(CROSS)as
+AR      = $(CROSS)ar
+CC      = $(CROSS)gcc
+CPP     = $(CC) -E
+LD      = $(CROSS)ld
+NM      = $(CROSS)nm
+OBJCOPY = $(CROSS)objcopy
+OBJDUMP = $(CROSS)objdump
+RANLIB  = $(CROSS)ranlib
+READELF = $(CROSS)readelf
+SIZE    = $(CROSS)size
+STRINGS = $(CROSS)strings
+STRIP   = $(CROSS)strip
 
-CFLAGS				=
-LDFLAGS				=   -lpanel -g3
-OBJS				=   lfdk
-LIBS				=	libmem.c libpci.c libio.c libcmos.c
+CFLAGS  = -g3
+LDFLAGS = -lpanel -lncurses
 
+PROGS   = lfdk
 
-all:
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(OBJS) $(OBJS).c $(LIBS)
-	#$(STRIP) $(OBJS)
+all: $(PROGS)
+
+lfdk: lfdk.c libmem.c libpci.c libio.c libcmos.c
+	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
+	#$(STRIP) $(PROGS)
 
 clean:
-	rm -f *.o $(OBJS)
-
+	rm -f *.o $(PROGS)
 
