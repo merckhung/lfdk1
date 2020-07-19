@@ -13,15 +13,15 @@ SIZE    = $(CROSS)size
 STRINGS = $(CROSS)strings
 STRIP   = $(CROSS)strip
 
-CFLAGS  = -g3
-LDFLAGS = -lpanel -lncurses
+CFLAGS  += -g3
+LDFLAGS += -lpanel -lncurses
 
 PROGS   = lfdk
 
 all: $(PROGS)
 
 lfdk: lfdk.c libmem.c libpci.c libio.c libcmos.c
-	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $? $(LDFLAGS)
 	#$(STRIP) $(PROGS)
 
 clean:
