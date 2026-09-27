@@ -1,16 +1,25 @@
-CONFIG_LFDD=m
+# SPDX-License-Identifier: GPL-2.0
+#
+# LFDD - Linux Firmware Debug Driver
+#
+# Out-of-tree kernel module. Build against the running kernel with `make`, or
+# against another tree with `make KDIR=/path/to/linux`.
 
-obj-$(CONFIG_LFDD) := lfdd_drv.o
-lfdd_drv-objs := libpci_x86.o libpcie_x86.o libmem.o libio.o libi2c_ich.o lfdd.o
-EXTRA_CFLAGS += -DLFDD_DEBUG
+ifneq ($(KERNELRELEASE),)
 
-KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+obj-m := lfdd.o
+lfdd-y := lfdd_main.o lfdd_pci.o lfdd_mem.o lfdd_io.o lfdd_cmos.o
 
-PWD := $(shell pwd)
+else
 
-default:
-	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
+KDIR ?= /lib/modules/$(shell uname -r)/build
+
+all:
+	$(MAKE) -C $(KDIR) M=$(CURDIR) modules
 
 clean:
-	rm -rf *.o *.ko *.mod.c .*.cmd .*.o.d .tmp_versions Module.symvers modules.order Module.markers
+	$(MAKE) -C $(KDIR) M=$(CURDIR) clean
 
+.PHONY: all clean
+
+endif
