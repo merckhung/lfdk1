@@ -1,29 +1,39 @@
-CROSS   =
-AS      = $(CROSS)as
-AR      = $(CROSS)ar
-CC      = $(CROSS)gcc
-CPP     = $(CC) -E
-LD      = $(CROSS)ld
-NM      = $(CROSS)nm
-OBJCOPY = $(CROSS)objcopy
-OBJDUMP = $(CROSS)objdump
-RANLIB  = $(CROSS)ranlib
-READELF = $(CROSS)readelf
-SIZE    = $(CROSS)size
-STRINGS = $(CROSS)strings
-STRIP   = $(CROSS)strip
+# LFDK - Linux Firmware Debug Kit
+#
+#   make            Build lfdk.
+#   make STATIC=1   Build a statically linked lfdk (e.g. for an initramfs).
+#   make install    Install lfdk and pci.ids under $(PREFIX).
 
-CFLAGS  = -g3
-LDFLAGS = -lpanel -lncurses
+CC ?= gcc
+PKG_CONFIG ?= pkg-config
+PREFIX ?= /usr/local
+DATADIR ?= $(PREFIX)/share/lfdk
 
-PROGS   = lfdk
+CFLAGS ?= -O2 -g
+CFLAGS += -std=gnu11 -Wall -Wextra -DLFDK_DATADIR='"$(DATADIR)"'
 
-all: $(PROGS)
+ifeq ($(STATIC),1)
+LDFLAGS += -static
+NCURSES_LIBS := $(shell $(PKG_CONFIG) --static --libs ncurses 2>/dev/null || echo -lncurses -ltinfo)
+else
+NCURSES_LIBS := $(shell $(PKG_CONFIG) --libs ncurses 2>/dev/null || echo -lncurses)
+endif
+LDLIBS += $(NCURSES_LIBS)
 
-lfdk: lfdk.c libmem.c libpci.c libio.c libcmos.c
-	$(CC) $(CFLAGS) -o $@ $? $(LDFLAGS)
-	#$(STRIP) $(PROGS)
+OBJS := lfdk.o ui.o pci.o space.o
+
+all: lfdk
+
+lfdk: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+$(OBJS): lfdk.h ../lfdd/lfdd_ioctl.h
+
+install: lfdk
+	install -D -m 0755 lfdk $(DESTDIR)$(PREFIX)/bin/lfdk
+	install -D -m 0644 pci.ids $(DESTDIR)$(DATADIR)/pci.ids
 
 clean:
-	rm -f *.o $(PROGS)
+	rm -f lfdk $(OBJS)
 
+.PHONY: all install clean
