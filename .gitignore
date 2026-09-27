@@ -1,0 +1,13 @@
+# Build output
+/bin/
+*.o
+*.ko
+*.mod
+*.mod.c
+*.cmd
+.*.cmd
+*.a
+modules.order
+Module.symvers
+.tmp_versions/
+/lfdk/lfdk
