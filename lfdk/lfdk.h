@@ -1,193 +1,114 @@
-/*
- * LFDK - Linux Firmware Debug Kit
- * File: lfdk.h
- *
- * Copyright (C) 2006 - 2010 Merck Hung <merckhung@gmail.com>
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
-#define LFDK_VERSION            "2.0.0"
-#define LFDK_PROGNAME           "lfdk"
-#define LFDK_VERTEXT            LFDK_PROGNAME" version "LFDK_VERSION", Linux Firmware Debug Kit"
-#define LFDK_MAX_PCIBUF         50
-#define LFDK_MAX_PATH           40
-#define LFDK_MAX_PCIBUS			256
-#define LFDK_MAX_READBUF        512
-#define LFDK_DEFAULT_PCINAME    "/usr/share/misc/pci.ids"
-#define LFDK_MAX_PCINAME        75
-#define LFDK_BYTE_PER_LINE		16
+// LFDK - Linux Firmware Debug Kit
+//
+// Copyright (C) 2006 - 2026 Merck Hung <merckhung@gmail.com>
+//
+// This software is licensed under the terms of the GNU General Public
+// License version 2, as published by the Free Software Foundation, and
+// may be copied, distributed, and modified under those terms.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+#ifndef LFDK_LFDK_H_
+#define LFDK_LFDK_H_
 
-#define LFDK_CMOS_RANGE_BYTES	256
-#define LFDK_CMOS_IO_START		0x70
-#define LFDK_CMOS_IO_END		0x72
-#define LFDK_CMOS_ADDR_PORT		0x70
-#define LFDK_CMOS_DATA_PORT		0x71
-#define LFDK_MEM_DEV			"/dev/mem"
+#include <stdbool.h>
+#include <stdint.h>
 
+#include "../lfdd/lfdd_ioctl.h"
 
-#define LFDD_IOCTL( FDESC, IOCTL_CMD, DATA ) {              \
-                                                            \
-    if( ioctl( FDESC, IOCTL_CMD, &DATA ) ) {                \
-                                                            \
-        endwin();                                           \
-        fprintf( stderr, "Cannot execute command\n\n" );    \
-        exit( 1 );                                          \
-    }                                                       \
-}
+#define LFDK_VERSION LFDD_VERSION
+#define LFDK_PROGNAME "lfdk"
 
-
-#define PrintWin( RESRC, NAME, LINE, COLUMN, X, Y, COLORPAIR, FORMAT, ARGS... ) {   \
-                                                                                    \
-    RESRC.NAME = newwin( LINE, COLUMN, X, Y );                                      \
-    RESRC.p_##NAME = new_panel( RESRC.NAME );                                       \
-    wbkgd( RESRC.NAME, COLOR_PAIR( COLORPAIR ) );                                   \
-    wattrset( RESRC.NAME, COLOR_PAIR( COLORPAIR ) | A_BOLD );                       \
-    wprintw( RESRC.NAME, FORMAT, ##ARGS );                                          \
-    wattrset( RESRC.NAME, A_NORMAL );                                               \
-}
-
-
-#define PrintFixedWin( RESRC, NAME, LINE, COLUMN, X, Y, COLORPAIR, FORMAT, ARGS... ) {  \
-                                                                                        \
-    if( !RESRC.NAME ) {                                                                 \
-                                                                                        \
-        RESRC.NAME = newwin( LINE, COLUMN, X, Y );                                      \
-        RESRC.p_##NAME = new_panel( RESRC.NAME );                                       \
-    }                                                                                   \
-    wbkgd( RESRC.NAME, COLOR_PAIR( COLORPAIR ) );                                       \
-    wattrset( RESRC.NAME, COLOR_PAIR( COLORPAIR ) | A_BOLD );                           \
-    mvwprintw( RESRC.NAME, 0, 0, FORMAT, ##ARGS );                                      \
-    wattrset( RESRC.NAME, A_NORMAL );                                                   \
-}
-
-
-#define DestroyWin( RESRC, NAME ) {     \
-                                        \
-    if( RESRC.p_##NAME ) {              \
-                                        \
-        del_panel( RESRC.p_##NAME );    \
-        RESRC.p_##NAME = NULL;          \
-    }                                   \
-                                        \
-    if( RESRC.NAME ) {                  \
-                                        \
-        delwin( RESRC.NAME );           \
-        RESRC.NAME = NULL;              \
-    }                                   \
-}
-
-
+// Fixed 80x24 layout.
 enum {
-
-    PCI_DEVICE_FUNC = 1,
-    PCI_LIST_FUNC,
-    MEM_SPACE_FUNC,
-    IO_SPACE_FUNC,
-	CMOS_SPACE_FUNC,
-	I2C_SPACE_FUNC,
+  kScreenRows = 24,
+  kScreenCols = 80,
+  kBytesPerLine = 16,
+  kGridRow = 4,     // Row of the hex grid column header.
+  kGridCol = 1,     // Column of the hex grid offset labels.
+  kSideCol = 56,    // Column of the side panel next to the grid.
+  kInfoRow = 22,    // Row of the per-screen information line.
+  kStatusRow = 21,  // Row of transient error messages.
+  kHelpRow = 23,    // Row of the key help bar.
 };
 
-
-enum {
-
-    WHITE_RED = 1,
-    WHITE_BLUE,
-    BLACK_WHITE,
-    CYAN_BLUE,
-    RED_BLUE,
-    YELLOW_BLUE,
-    BLACK_GREEN,
-    BLACK_YELLOW,
-    YELLOW_RED,
-    YELLOW_BLACK,
-    WHITE_YELLOW
+enum ColorPair {
+  kColorTitle = 1,  // White on red.
+  kColorBody,       // White on blue.
+  kColorHelp,       // Black on white.
+  kColorLabel,      // Cyan on blue.
+  kColorOffset,     // Red on blue.
+  kColorNonZero,    // Yellow on blue.
+  kColorHeader,     // Black on green.
+  kColorCursor,     // Black on yellow.
+  kColorEditOn,     // Yellow on red.
+  kColorEditOff,    // Yellow on black.
+  kColorError,      // White on red.
 };
 
+typedef enum {
+  kScreenQuit,
+  kScreenPciList,
+  kScreenPciDevice,
+  kScreenMemory,
+  kScreenIo,
+  kScreenCmos,
+} ScreenId;
 
+// lfdk.c
+
+// Issues an ioctl to /dev/lfdd. On failure the error is shown on the status
+// line and false is returned.
+bool LfddIoctl(unsigned long request, void* arg);
+
+// Shows a message on the status line until the next key press.
+void SetStatus(const char* format, ...) __attribute__((format(printf, 1, 2)));
+
+// ui.c
+
+// Cursor of the 16x16 hex editor grid.
 typedef struct {
+  int row;
+  int col;
+  bool editing;     // A new value is being typed.
+  uint8_t pending;  // The value typed so far.
+} HexCursor;
 
-    PANEL   *p_bg;
-    PANEL   *p_logo;
-    PANEL   *p_copyright;
-    PANEL   *p_help;
-    PANEL   *p_time;
+typedef enum {
+  kHexIgnored,  // The key is not a grid key.
+  kHexHandled,  // The cursor moved or the pending value changed.
+  kHexCommit,   // Enter was pressed; write |pending| at the cursor.
+} HexKeyResult;
 
-    WINDOW  *bg;
-    WINDOW  *logo;
-    WINDOW  *copyright;
-    WINDOW  *help;
-    WINDOW  *time;
+void UiInit(void);
+void UiShutdown(void);
+void UiPrint(int row, int col, int pair, const char* format, ...)
+    __attribute__((format(printf, 4, 5)));
+void UiFillRow(int row, int pair);
+void UiDrawFrame(const char* help, const char* status);
+bool UiHexDigit(int key, int* value);
 
-} BasePanel;
+HexKeyResult HexCursorKey(HexCursor* cursor, int key);
+int HexCursorOffset(const HexCursor* cursor);
 
+// Draws 256 bytes as a 16x16 grid. |label_base| is the offset shown on the
+// first row. |cursor| may be NULL. |blink| toggles the edit highlight.
+void UiDrawHexGrid(const uint8_t* data, const HexCursor* cursor,
+                   unsigned int label_base, bool show_ascii, bool blink);
 
-typedef struct {
+// pci.c
+void PciScan(int max_bus);
+void PciLoadNames(const char* path);
+ScreenId PciListKey(int key);
+void PciListDraw(void);
+ScreenId PciDeviceKey(int key);
+void PciDeviceDraw(bool blink);
 
-    PANEL *p_ven;
-    PANEL *p_dev;
-    PANEL *p_offset;
-    PANEL *p_info;
-    PANEL *p_rtitle;
-    PANEL *p_value;
+// space.c (memory, I/O and CMOS views)
+void SpaceActivate(ScreenId id);
+ScreenId SpaceKey(ScreenId id, int key);
+void SpaceDraw(ScreenId id, bool blink);
 
-    WINDOW *ven;
-    WINDOW *dev;
-    WINDOW *offset;
-    WINDOW *info;
-    WINDOW *rtitle;
-    WINDOW *value;
-
-} PCIPanel;
-
-
-typedef struct {
-
-    PANEL *p_title;
-    PANEL *p_devname;
-    PANEL *p_vendev;
-    PANEL *p_scan;
-
-    WINDOW *title;
-    WINDOW *devname;
-    WINDOW *vendev;
-    WINDOW *scan;
-
-} PCILPanel;
-
-
-typedef struct {
-
-    PANEL *p_offset;
-    PANEL *p_info;
-    PANEL *p_value;
-    PANEL *p_ascii;
-
-    WINDOW *offset;
-    WINDOW *info;
-    WINDOW *value;
-    WINDOW *ascii;
-
-} MemPanel;
-
-
-typedef struct {
-
-    unsigned short int      venid;
-    unsigned short int      devid;
-    unsigned char           bus;
-    unsigned char           dev;
-    unsigned char           fun;
-    unsigned char           ventxt[ LFDK_MAX_PCINAME + 1 ];
-    unsigned char           devtxt[ LFDK_MAX_PCINAME + 1 ];
-
-} PCIData;
-
-
+#endif  // LFDK_LFDK_H_
